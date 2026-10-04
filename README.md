@@ -1,4 +1,4 @@
-# lab19-2569-starter — Lab 18: เชื่อม Frontend กับ Backend API
+# lab19-2569-starter 
 
 ชื่อ-สกุล :
 
