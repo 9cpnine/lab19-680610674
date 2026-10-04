@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc && tsc-alias",
+    "build": "prisma generate && tsc && tsc-alias && node -e \"const fs=require('fs');for(const f of fs.readdirSync('generated/prisma'))if(f.endsWith('.node'))fs.copyFileSync('generated/prisma/'+f,'dist/generated/prisma/'+f)\"",
     "start": "node ./dist/src/index.js",
     "db:generate": "pnpm exec prisma generate",
     "db:push": "pnpm exec prisma db push",
