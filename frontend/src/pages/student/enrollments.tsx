@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { PlusCircle } from "lucide-react";
+import { ArrowRightLeft, PlusCircle } from "lucide-react";
 
+import { ConfirmDeleteButton } from "@/components/confirm-button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,11 +33,20 @@ import { useEnrollmentStore } from "@/lib/enrollment-store";
 
 export default function StudentEnrollmentsPage() {
   const studentId = useAuthStore((s) => s.studentId);
-  const { students, courses, enrollments, enroll } = useEnrollmentStore();
+  const {
+    students,
+    courses,
+    enrollments,
+    enroll,
+    updateEnrollment,
+    dropEnrollment,
+  } = useEnrollmentStore();
 
   const [open, setOpen] = useState(false);
   const [formCourse, setFormCourse] = useState<string | null>(null);
+  const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [tableError, setTableError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const me = students.find((s) => s.studentId === studentId);
@@ -56,8 +66,16 @@ export default function StudentEnrollmentsPage() {
     setOpen(next);
     if (!next) {
       setFormCourse(null);
+      setEditingCourseId(null);
       setServerError(null);
     }
+  };
+
+  const openChangeCourse = (courseId: string) => {
+    setEditingCourseId(courseId);
+    setFormCourse(null);
+    setServerError(null);
+    setOpen(true);
   };
 
   const handleEnroll = async () => {
@@ -65,12 +83,26 @@ export default function StudentEnrollmentsPage() {
     setSubmitting(true);
     setServerError(null);
     try {
-      await enroll(studentId, formCourse);
+      if (editingCourseId) {
+        await updateEnrollment(studentId, editingCourseId, formCourse);
+      } else {
+        await enroll(studentId, formCourse);
+      }
       handleOpenChange(false);
     } catch (err) {
       setServerError((err as Error).message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDrop = async (courseId: string) => {
+    if (!studentId) return;
+    setTableError(null);
+    try {
+      await dropEnrollment(studentId, courseId);
+    } catch (err) {
+      setTableError((err as Error).message);
     }
   };
 
@@ -94,9 +126,13 @@ export default function StudentEnrollmentsPage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
-              <DialogTitle>ลงทะเบียนเรียน</DialogTitle>
+              <DialogTitle>
+                {editingCourseId ? "เปลี่ยนวิชา" : "ลงทะเบียนเรียน"}
+              </DialogTitle>
               <DialogDescription>
-                เลือกวิชาที่ยังไม่ได้ลงทะเบียน
+                {editingCourseId
+                  ? `เลือกวิชาใหม่แทน ${editingCourseId}`
+                  : "เลือกวิชาที่ยังไม่ได้ลงทะเบียน"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-1.5">
@@ -110,7 +146,7 @@ export default function StudentEnrollmentsPage() {
                   <SelectValue
                     placeholder={
                       courseOptions.length === 0
-                        ? "ลงทะเบียนครบทุกวิชาแล้ว"
+                        ? "ไม่มีวิชาให้เลือก"
                         : "เลือกวิชา"
                     }
                   />
@@ -133,12 +169,22 @@ export default function StudentEnrollmentsPage() {
                 onClick={handleEnroll}
               >
                 <PlusCircle className="h-4 w-4" />
-                {submitting ? "กำลังลงทะเบียน..." : "ลงทะเบียน"}
+                {submitting
+                  ? "กำลังบันทึก..."
+                  : editingCourseId
+                    ? "บันทึก"
+                    : "ลงทะเบียน"}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
+
+      {tableError && (
+        <p className="text-sm text-destructive">
+          ยกเลิกการลงทะเบียนไม่สำเร็จ: {tableError}
+        </p>
+      )}
 
       <div className="rounded-lg border">
         <Table>
@@ -148,13 +194,14 @@ export default function StudentEnrollmentsPage() {
               <TableHead>ชื่อวิชา</TableHead>
               <TableHead>ผู้สอน</TableHead>
               <TableHead>วันที่ลงทะเบียน</TableHead>
+              <TableHead className="w-24 text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {myEnrollments.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={4}
+                  colSpan={5}
                   className="h-20 text-center text-muted-foreground"
                 >
                   ยังไม่ได้ลงทะเบียนวิชาใด
@@ -172,6 +219,22 @@ export default function StudentEnrollmentsPage() {
                     {e.enrolledAt
                       ? new Date(e.enrolledAt).toLocaleString("th-TH")
                       : "-"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`เปลี่ยนวิชา ${e.courseId}`}
+                      onClick={() => openChangeCourse(e.courseId)}
+                    >
+                      <ArrowRightLeft className="h-4 w-4" />
+                    </Button>
+                    <ConfirmDeleteButton
+                      label={`ยกเลิกการลงทะเบียน ${e.courseId}`}
+                      title={`ยกเลิกการลงทะเบียน ${e.courseId}?`}
+                      description={`ต้องการยกเลิกการลงทะเบียนวิชา ${course?.courseTitle ?? e.courseId} หรือไม่`}
+                      onConfirm={() => handleDrop(e.courseId)}
+                    />
                   </TableCell>
                 </TableRow>
               );
