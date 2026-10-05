@@ -47,7 +47,6 @@ const zInterests = z
   .array(z.string())
   .min(1, { message: "เลือกความสนใจอย่างน้อย 1 ด้าน" })
   .max(MAX_INTERESTS, { message: `เลือกได้ไม่เกิน ${MAX_INTERESTS} ด้าน` });
-// Frontend ส่ง emails เป็น string[] (map จาก { address } แล้ว)
 const zEmails = z
   .array(
     z
@@ -74,9 +73,9 @@ export const zStudentPostBody = z.object({
 
 export const zStudentPutBody = z.object({
   studentId: zStudentId,
-  firstName: zFirstName.nullish(), //firstName can be null or undefined
-  lastName: zLastName.nullish(), //lastName can be null or undefined
-  program: zProgram.nullish(), //program can be null or undefined
+  firstName: zFirstName.nullish(),
+  lastName: zLastName.nullish(),
+  program: zProgram.nullish(),
   interests: zInterests.nullish(),
   emails: zEmails.nullish(),
 });
@@ -86,6 +85,12 @@ export const zStudentPutBody = z.object({
 export const zEnrollmentBody = z.object({
   studentId: zStudentId,
   courseId: zCourseId,
+});
+
+export const zEnrollmentPutBody = z.object({
+  studentId: zStudentId,
+  courseId: zCourseId,
+  newCourseId: zCourseId,
 });
 
 ////// User Validators //////
