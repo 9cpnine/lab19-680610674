@@ -190,16 +190,6 @@ router.put(
       const { studentId, firstName, lastName, program, interests, emails } =
         result.data;
 
-      if (
-        req.user?.role === "STUDENT" &&
-        req.user.studentId !== studentId
-      ) {
-        return res.status(403).json({
-          success: false,
-          message: "Forbidden access",
-        });
-      }
-
       const student = await prisma.student.findUnique({
         where: { studentId },
       });
@@ -208,6 +198,16 @@ router.put(
         return res.status(404).json({
           success: false,
           message: `Student ${studentId} does not exists`,
+        });
+      }
+
+      if (
+        req.user?.role === "STUDENT" &&
+        req.user.studentId !== studentId
+      ) {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden access",
         });
       }
 
