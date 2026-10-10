@@ -58,6 +58,7 @@ export function ThemeProvider({
 
   const value = {
     theme,
+    // เปลี่ยนธีมและบันทึกค่าลงในเครื่อง
     setTheme: (theme: Theme) => {
       try {
         localStorage.setItem(storageKey, theme);

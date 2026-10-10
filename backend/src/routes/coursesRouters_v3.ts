@@ -83,7 +83,7 @@ router.get(
 });
 
 // POST /api/v3/courses, body = {new course data}
-// add a new course
+// สร้างรายวิชาใหม่
 router.post(
   "/", 
   authenticateToken, 

@@ -47,6 +47,7 @@ router.get(
 
 // POST /api/v3/enrollments, body = {studentId, courseId}
 // ADMIN: enroll any student, STUDENT: enroll only himself
+// ลงทะเบียนนักศึกษาในรายวิชา
 router.post(
   "/",
   authenticateToken,

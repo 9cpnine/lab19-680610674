@@ -7,6 +7,7 @@ import { type CustomRequest, type UserPayload } from "../libs/types.ts";
 import { PrismaClient } from "../../generated/prisma/client.ts";
 const prisma = new PrismaClient();
 
+// ตรวจสอบ JWT ก่อนอนุญาตให้เรียก API
 export const authenticateToken = (
   req: CustomRequest,
   res: Response,

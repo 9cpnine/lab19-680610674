@@ -66,6 +66,7 @@ export const useEnrollmentStore = create<EnrollmentStore>()((set) => ({
   loading: false,
   error: null,
 
+  // โหลดข้อมูลตามสิทธิ์ผู้ใช้
   getAll: async (role, studentId) => {
     set({ loading: true, error: null });
     try {
@@ -120,6 +121,7 @@ export const useEnrollmentStore = create<EnrollmentStore>()((set) => ({
     }));
   },
 
+  // ลบนักศึกษาและข้อมูลการลงทะเบียน
   removeStudent: async (studentId) => {
     await api<Student>("/students", {
       method: "DELETE",
@@ -151,6 +153,7 @@ export const useEnrollmentStore = create<EnrollmentStore>()((set) => ({
     }));
   },
 
+  // ลบรายวิชาและข้อมูลการลงทะเบียน
   removeCourse: async (courseId) => {
     await api<Course>("/courses", {
       method: "DELETE",

@@ -89,6 +89,7 @@ export function CourseFormDialog({ course }: { course?: Course }) {
     }));
   };
 
+  // อัปเดตค่าฟอร์มและตรวจช่องที่ผู้ใช้แตะแล้ว
   const handleChange = <K extends keyof CourseFormValues>(
     name: K,
     value: CourseFormValues[K],

@@ -110,6 +110,7 @@ router.get(
   },
 );
 
+// สร้างข้อมูลนักศึกษาใหม่
 // POST /api/v3/students, body = {new student data}
 router.post(
   "/",

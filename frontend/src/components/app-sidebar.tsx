@@ -45,6 +45,7 @@ export function AppSidebar() {
   const clear = useAuthStore((s) => s.clear);
   const items = role ? itemsByRole[role] : [];
 
+  // ส่งคำขอออกจากระบบและล้างข้อมูลบัญชีในเครื่อง
   const handleLogout = async () => {
     try {
       await api("/users/logout", { method: "POST" });

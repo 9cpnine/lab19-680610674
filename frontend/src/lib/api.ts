@@ -23,6 +23,7 @@ type ApiResponse<T> = {
 
 export const http = axios.create({ baseURL: API_URL });
 
+// แนบ token กับคำขอที่ต้องยืนยันตัวตน
 http.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token;
   if (token && !config.skipAuth) {
@@ -37,6 +38,7 @@ declare module "axios" {
   }
 }
 
+// ส่งคำขอ API และแปลงผลลัพธ์หรือข้อผิดพลาดให้อยู่ในรูปแบบมาตรฐาน
 export async function api<T>(
   path: string,
   options: { method?: Method; body?: unknown; auth?: boolean } = {},

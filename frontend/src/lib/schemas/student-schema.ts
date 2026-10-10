@@ -46,6 +46,7 @@ export const studentFormSchema = z.object({
 
 export type StudentFormValues = z.infer<typeof studentFormSchema>;
 
+// สร้าง schema ตรวจข้อมูลนักศึกษาพร้อมเช็กรหัสซ้ำ
 export function createStudentFormSchema(
   existingStudents: Student[],
   currentStudentId?: string,

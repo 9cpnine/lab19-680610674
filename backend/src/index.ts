@@ -69,6 +69,7 @@ app.use("/api/v3/enrollments", enrollmentRouter_v3);
 // endpoint check middleware
 app.use(notFoundMiddleware);
 
+// เริ่มเซิร์ฟเวอร์ API
 app.listen(port, () => {
   console.log(`🚀 Server running on http://localhost:${port}`);
 });

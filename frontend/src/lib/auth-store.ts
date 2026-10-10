@@ -29,6 +29,7 @@ const emptyAuth: AuthState = {
   studentId: null,
 };
 
+// ถอดรหัสข้อมูล payload จาก JWT
 function decodeJwt(token: string): JwtPayload | null {
   try {
     const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -39,6 +40,7 @@ function decodeJwt(token: string): JwtPayload | null {
   }
 }
 
+// สร้างสถานะบัญชีจาก token ที่ยังใช้งานได้
 function authFromToken(token: string | null | undefined): AuthState {
   if (!token) return emptyAuth;
   const payload = decodeJwt(token);
